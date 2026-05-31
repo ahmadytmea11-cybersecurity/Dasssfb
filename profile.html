@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي - مدرسة دير أبي سعيد الثانوية للبنين</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* إعدادات التصميم العام وعناصر الـ Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: background 0.3s, border-color 0.3s, color 0.3s; }
+        body { background-color: #f4f6f9; color: #2c3e50; line-height: 2.4; display: flex; flex-direction: column; min-height: 100vh; position: relative; overflow-x: hidden; }
+        
+        /* شريط علوي رسمي حكومي */
+        .gov-top-bar { background-color: #1a252f; color: #bdc3c7; font-size: 13px; padding: 8px 0; border-bottom: 3px solid #c5a059; }
+        .gov-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; padding: 0 20px; align-items: center; width: 100%; }
+        
+        /* تنسيق قسم اليمين في الشريط العلوي */
+        .gov-right-side { display: flex; align-items: center; gap: 15px; }
+        .dark-mode-btn { background: none; border: none; color: #bdc3c7; font-family: 'Cairo'; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .dark-mode-btn:hover { color: #c5a059; }
+
+        /* زاوية البروفايل الشخصي العلوية والمعلومات المنسدلة */
+        .user-profile-area { display: none; align-items: center; gap: 10px; cursor: pointer; user-select: none; position: relative; }
+        .profile-img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #c5a059; background: #cbd5e1; object-fit: cover; }
+
+        /* نافذة معلومات البروفايل المنبثقة (Dropdown) */
+        .profile-dropdown { display: none; position: absolute; left: 0; top: 40px; background: white; border: 1px solid #e2e8f0; width: 260px; padding: 20px; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 2000; border-top: 4px solid #1e3a5f; text-align: right; }
+        .profile-dropdown h4 { color: #1e3a5f; font-size: 16px; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; font-weight: 700; line-height: 1.5; }
+        .profile-dropdown p { font-size: 13px; color: #4a5568; line-height: 1.8; margin-bottom: 5px; }
+        .logout-link { display: inline-block; margin-top: 10px; color: #e74c3c; text-decoration: none; font-size: 13px; font-weight: bold; }
+        .logout-link:hover { color: #c0392b; }
+
+        /* شاشة التأكيد المنبثقة الفخمة الموحدة للموقع (Modal) */
+        .logout-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+        .modal-content { background: #ffffff; padding: 35px; border-radius: 8px; max-width: 420px; width: 90%; text-align: center; border-top: 6px solid #e74c3c; box-shadow: 0 15px 35px rgba(0,0,0,0.3); animation: modalSlide 0.3s ease; }
+        .modal-text { font-size: 16px; font-weight: 600; color: #2c3e50; margin-bottom: 25px; }
+        .modal-buttons { display: flex; gap: 15px; justify-content: center; }
+        .btn-modal { padding: 10px 25px; border: none; border-radius: 4px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-confirm { background-color: #e74c3c; color: white; }
+        .btn-confirm:hover { background-color: #c0392b; }
+        .btn-cancel { background-color: #95a5a6; color: white; }
+        .btn-cancel:hover { background-color: #7f8c8d; }
+
+        /* الهيدر والترويسة الرئيسية */
+        .main-header { background-color: #ffffff; padding: 20px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; width: 100%; }
+        .brand-text h1 { font-size: 22px; color: #1e3a5f; font-weight: 700; }
+        .brand-text p { font-size: 13px; color: #7f8c8d; }
+
+        /* شريط التنقل */
+        .navbar { background-color: #1e3a5f; border-bottom: 4px solid #c5a059; position: sticky; top: 0; z-index: 1000; height: 54px; }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; list-style: none; padding: 0 20px; align-items: center; height: 100%; }
+        .nav-container li a { display: block; color: #ffffff; text-decoration: none; padding: 0 20px; line-height: 54px; font-size: 15px; font-weight: 600; }
+        .nav-container li a:hover, .nav-container li a.active { background-color: #c5a059; color: #1e3a5f; }
+        
+        /* تغليف ومحتوى بطاقة الملف الشخصي */
+        .profile-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        .profile-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; width: 100%; max-width: 500px; padding: 35px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); border-top: 5px solid #1e3a5f; text-align: center; }
+        
+        /* صندوق الصورة الشخصية التفاعلي المطور */
+        .avatar-container { position: relative; width: 120px; height: 120px; margin: 0 auto 10px; cursor: pointer; }
+        .avatar-box { width: 100%; height: 100%; background: #f1f5f9; border: 3px solid #c5a059; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 50px; color: #64748b; overflow: hidden; object-fit: cover; }
+        .avatar-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(30, 58, 95, 0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold; opacity: 0; transition: opacity 0.3s ease; }
+        .avatar-container:hover .avatar-overlay { opacity: 1; }
+        .upload-hint { font-size: 12px; color: #7f8c8d; margin-bottom: 20px; }
+
+        .profile-title { color: #1e3a5f; font-size: 22px; font-weight: 700; margin-bottom: 25px; }
+        
+        /* مجموعات البيانات الشخصية */
+        .info-group { margin-bottom: 15px; text-align: right; background: #f8fafc; padding: 12px 20px; border-radius: 6px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .info-label { font-weight: 700; color: #1e3a5f; }
+        .info-value { color: #334155; font-weight: 600; }
+        
+        /* التذييل والفوتر السفلي */
+        .gov-footer { background-color: #1a252f; color: #ffffff; padding: 40px 20px; text-align: center; border-top: 5px solid #c5a059; font-size: 14px; margin-top: auto; }
+        .gov-footer p { margin-bottom: 10px; color: #cbd5e1; }
+
+        /* الأنيميشن */
+        @keyframes modalSlide { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* 🌙 كلاسات وتعديلات الوضع المظلم الفخم */
+        body.dark-mode { background-color: #12181f !important; color: #e2e8f0 !important; }
+        body.dark-mode .main-header, body.dark-mode .profile-card, body.dark-mode .profile-dropdown { background-color: #1a232d !important; border-color: #2d3748 !important; color: #e2e8f0 !important; }
+        body.dark-mode .brand-text h1 { color: #f1f5f9 !important; }
+        body.dark-mode .brand-text p { color: #cbd5e1 !important; }
+        body.dark-mode .profile-title { color: #c5a059 !important; }
+        body.dark-mode .avatar-box { background-color: #12181f !important; }
+        body.dark-mode .info-group { background: #12181f !important; border-color: #2d3748 !important; }
+        body.dark-mode .info-label { color: #c5a059 !important; }
+        body.dark-mode .info-value { color: #e2e8f0 !important; }
+        body.dark-mode .dark-mode-btn { color: #cbd5e1; }
+        body.dark-mode .upload-hint { color: #cbd5e1; }
+    </style>
+    <script>
+        // 🧠 فحص استباقي لمنع حدوث وميض الإضاءة البيضاء عند تحميل الصفحة
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+        }
+    </script>
+</head>
+<body>
+
+    <div id="customLogoutModal" class="logout-modal">
+        <div class="modal-content">
+            <div class="modal-text">❓ هل أنت متأكد من أنك تريد تسجيل الخروج من حسابك التعليمي؟</div>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-confirm" onclick="confirmLogout()">نعم، تسجيل الخروج</button>
+                <button class="btn-modal btn-cancel" onclick="closeLogoutModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="gov-top-bar">
+        <div class="gov-container">
+            <div class="gov-right-side">
+                <div>بوابة إدارة البيانات الشخصية للطالب</div>
+                <span>|</span>
+                <button id="darkModeToggle" class="dark-mode-btn" onclick="toggleDarkMode()">🌙 الوضع المظلم</button>
+            </div>
+            
+            <div id="userArea" class="user-profile-area" onclick="toggleDropdown(event)">
+                <span id="topUsername" style="color:#bdc3c7; font-size:13px; font-weight: 600;"></span>
+                <img id="topProfileImg" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="profile-img" alt="البروفايل">
+                
+                <div id="profileDropdown" class="profile-dropdown">
+                    <h4 id="cardName">اسم الطالب</h4>
+                    <p><strong>الدور الفني:</strong> طالب نظامي</p>
+                    <p><strong>المؤسسة:</strong> مديرية التربية والتعليم - إربد</p>
+                    <p><strong>حالة الحساب:</strong> موثق ونشط</p>
+                    <a href="#" onclick="showLogoutModal(event)" class="logout-link">تسجيل الخروج</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="brand-text">
+                <h1>مدرسة دير أبي سعيد الثانوية للبنين</h1>
+                <p>نظام إدارة المحتوى التربوي والتعليمي المعتمد</p>
+            </div>
+        </div>
+    </header>
+
+    <nav class="navbar">
+        <ul class="nav-container">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="about.html">التعريف بالمدرسة</a></li>
+            <li><a href="classes.html">الصفوف والشعب</a></li>
+            <li><a href="profile.html" class="active">الملف الشخصي</a></li>
+            <li><a href="contact.html">بوابة التواصل</a></li>
+            <li><a href="login.html" id="loginMenuLink">بوابة الدخول</a></li>
+        </ul>
+    </nav>
+
+    <div class="profile-wrapper">
+        <div class="profile-card">
+            <input type="file" id="imageUploader" accept="image/*" style="display: none;" onchange="previewAndSaveImage(this)">
+            
+            <div class="avatar-container" onclick="triggerImageUpload()">
+                <div class="avatar-box" id="avatarDisplay">👨‍🎓</div>
+                <div class="avatar-overlay">تغيير الصورة</div>
+            </div>
+            <div class="upload-hint">اضغط على الصورة لتحديثها</div>
+
+            <h2 class="profile-title" id="studentName">جاري التحميل...</h2>
+            
+            <div class="info-group">
+                <span class="info-label">الرقم الوطني:</span>
+                <span class="info-value" id="studentID">-</span>
+            </div>
+            <div class="info-group">
+                <span class="info-label">الصف الدراسي:</span>
+                <span class="info-value" id="studentClass">-</span>
+            </div>
+            <div class="info-group">
+                <span class="info-label">الشعبة الدراسية:</span>
+                <span class="info-value" id="studentSection">-</span>
+            </div>
+            <div class="info-group">
+                <span class="info-label">حالة الحساب:</span>
+                <span class="info-value" style="color: #2ecc71; font-weight: bold;">نشط (طالب ممتثل)</span>
+            </div>
+        </div>
+    </div>
+
+    <footer class="gov-footer">
+        <p>جميع الحقوق الفنية والبرمجية محفوظة © ٢٠٢٦ | البوابة الإلكترونية الموحدة - مدرسة دير أبي سعيد الثانوية</p>
+        <p style="color: #c5a059; font-weight: bold; font-size: 15px; margin-top: 5px;">تم تصميم وتطوير النظام البرمجي من قبل الطالب: أحمد معاذ أحمد الرشدان</p>
+    </footer>
+
+    <script>
+        // 🛠️ دالة محاكاة الضغط لفتح نافذة اختيار الصورة
+        function triggerImageUpload() {
+            document.getElementById('imageUploader').click();
+        }
+
+        // 🖼️ دالة معالجة وتحويل الصورة إلى Base64 وحفظها في localStorage
+        function previewAndSaveImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    var base64Image = e.target.result;
+                    
+                    // حفظ الصورة في التخزين المحلي للمتصفح
+                    localStorage.setItem('profileImage', base64Image);
+                    
+                    // تحديث العرض في الصفحة فوراً
+                    updateAvatarDOM(base64Image);
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // دالة مساعدة لتحديث مظهر الأفاتار في كامل عناصر الصفحة
+        function updateAvatarDOM(imageData) {
+            var avatarDisplay = document.getElementById('avatarDisplay');
+            var topProfileImg = document.getElementById('topProfileImg');
+            
+            if (imageData) {
+                // استبدال الإيموجي بعنصر صورة حقيقي داخل الـ Box
+                avatarDisplay.innerHTML = `<img src="${imageData}" style="width:100%; height:100%; object-fit:cover;">`;
+                if(topProfileImg) topProfileImg.src = imageData;
+            }
+        }
+
+        // دالة التحكم وتفعيل المود الليلي 
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            var toggleBtn = document.getElementById('darkModeToggle');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                if(toggleBtn) toggleBtn.innerText = "☀️ الوضع المضيء";
+            } else {
+                localStorage.setItem('theme', 'light');
+                if(toggleBtn) toggleBtn.innerText = "🌙 الوضع المظلم";
+            }
+        }
+
+        // الحفاظ على حالة التبديل المختار
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                var toggleBtn = document.getElementById('darkModeToggle');
+                if(toggleBtn) toggleBtn.innerText = "☀️ الوضع المضيء";
+            }
+        });
+
+        window.onload = function() {
+            var isLoggedIn = localStorage.getItem('isLoggedIn');
+            var username = localStorage.getItem('username');
+            var nationalId = localStorage.getItem('nationalId');
+            var studentClass = localStorage.getItem('studentClass');
+            var studentSection = localStorage.getItem('studentSection');
+            var savedImage = localStorage.getItem('profileImage');
+            var loginMenuLink = document.getElementById('loginMenuLink');
+
+            // التوجيه التلقائي لبوابة الدخول إذا كان الطالب غير مسجل
+            if (isLoggedIn !== 'true' || !username) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // تفعيل وعرض منطقة البروفايل العلوي
+            document.getElementById('userArea').style.display = 'flex';
+            document.getElementById('topUsername').innerText = "مرحباً، " + username;
+            document.getElementById('cardName').innerText = username;
+
+            // تعديل الرابط في شريط المنيو
+            loginMenuLink.innerText = `تسجيل الخروج (${username})`;
+            loginMenuLink.href = "#";
+            loginMenuLink.onclick = function(e) {
+                e.preventDefault();
+                showLogoutModal(e);
+            };
+
+            // تعبئة بطاقة البيانات الشخصية
+            document.getElementById('studentName').innerText = username;
+            document.getElementById('studentID').innerText = nationalId ? nationalId : "-";
+            document.getElementById('studentClass').innerText = studentClass ? studentClass : "-";
+            document.getElementById('studentSection').innerText = studentSection ? studentSection : "-";
+
+            // استرجاع الصورة الشخصية المحفوظة تلقائياً عند تحميل الصفحة
+            if (savedImage) {
+                updateAvatarDOM(savedImage);
+            }
+        };
+
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            var dropdown = document.getElementById('profileDropdown');
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
+        }
+
+        window.onclick = function() {
+            var dropdown = document.getElementById('profileDropdown');
+            if (dropdown) dropdown.style.display = 'none';
+        }
+
+        function showLogoutModal(event) {
+            if(event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            document.getElementById('customLogoutModal').style.display = 'flex';
+            
+            var dropdown = document.getElementById('profileDropdown');
+            if (dropdown) dropdown.style.display = 'none';
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('customLogoutModal').style.display = 'none';
+        }
+
+        function confirmLogout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
